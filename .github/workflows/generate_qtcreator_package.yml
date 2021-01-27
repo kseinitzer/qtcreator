@@ -1,0 +1,47 @@
+name: QtCreator-package generator
+
+on: [push]
+
+jobs:
+  build:
+    name: GenerateQtCreator
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache pip
+        id: pipcache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pipCache
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+          architecture: 'x64'
+
+      - name: Install conan
+        if: steps.pipcache.outputs.cache-hit != 'true'
+        run: |
+          python -m pip install --upgrade pip
+          pip install conan
+
+      - name: Setup conan
+        if: steps.pipcache.outputs.cache-hit != 'true'
+        shell: pwsh
+        env:
+          bintrayApiKey: ${{ secrets.BINTRAY_API_KEY }}
+        run: |
+          conan remote add conan-center https://conan.bintray.com
+          conan remote add bincrafter https://api.bintray.com/conan/bincrafters/public-conan
+          conan remote add privateQt https://api.bintray.com/conan/kseinitzer/qt
+          conan user -p "$env:bintrayApiKey" -r privateQt kseinitzer
+
+      - name: Build Package
+        run: |
+          conan create .  kseinitzer/stable
+
+      - name: Upload Package
+        run: |
+          conan upload qtcreator/4.12.0@kseinitzer/stable -r privateQt --all
