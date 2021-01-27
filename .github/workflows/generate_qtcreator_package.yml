@@ -33,7 +33,6 @@ jobs:
         env:
           bintrayApiKey: ${{ secrets.BINTRAY_API_KEY }}
         run: |
-          conan remote add conan-center https://conan.bintray.com
           conan remote add bincrafter https://api.bintray.com/conan/bincrafters/public-conan
           conan remote add privateQt https://api.bintray.com/conan/kseinitzer/qt
           conan user -p "$env:bintrayApiKey" -r privateQt kseinitzer
