@@ -15,25 +15,17 @@ jobs:
           architecture: 'x64'
 
       - name: Cache pip
-        id: pipcache2
+        id: pip-cache
         uses: actions/cache@v2
         with:
           path: ${{ env.pythonLocation }}
-          key: ${{ runner.os }}-pipCache2
+          key: ${{ env.pythonLocation }}-${{ runner.os }}-${{ hashFiles('dev-requirements.txt') }}-pipCache
 
       - name: Install conan
-        if: steps.pipcache2.outputs.cache-hit != 'true'
+        if: steps.pip-cache.outputs.cache-hit != 'true'
         run: |
           python -m pip install --upgrade pip
-          pip install conan
-
-      - name: Conan Cache
-        id: conancache2
-        uses: actions/cache@v2
-        with:
-          path: ~/.conan
-          key: ${{ runner.os }}-conanCache2
-
+          pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt
 
       - name: Setup conan
         if: steps.conancache2.outputs.cache-hit != 'true'
@@ -46,7 +38,6 @@ jobs:
           conan user -p "$env:bintrayApiKey" -r privateQt kseinitzer
 
       - name: Install dependencies
-        if: steps.conancache2.outputs.cache-hit != 'true'
         run: |
           conan install qt/5.15.2@bincrafters/stable -o qtdeclarative=True -o qttools=True -o qtsvg=True
 
