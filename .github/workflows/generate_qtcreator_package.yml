@@ -39,7 +39,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          conan install qt/5.15.2@bincrafters/stable -o qtdeclarative=True -o qttools=True -o qtsvg=True
+          conan install qt/5.15.2@bincrafters/stable -o qtdeclarative=True -o qttools=True -o qtsvg=True -r privateQt
 
       - name: Build Package
         run: |
