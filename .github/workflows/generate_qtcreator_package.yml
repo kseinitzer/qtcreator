@@ -44,3 +44,15 @@ jobs:
           conan remote add bincrafter https://api.bintray.com/conan/bincrafters/public-conan
           conan user -p "$env:bintrayApiKey" -r privateQt kseinitzer
 
+      - name: Install dependencies
+        if: steps.conancache.outputs.cache-hit != 'true'
+        run: |
+          conan install qt/5.15.2@bincrafters/stable -o qtdeclarative=True -o qttools=True -o qtsvg=True
+
+      - name: Build Package
+        run: |
+          conan create .  kseinitzer/stable
+
+      - name: Upload Package
+        run: |
+          conan upload qtcreator/4.12.0@kseinitzer/stable -r privateQt --all
