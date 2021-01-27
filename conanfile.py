@@ -22,7 +22,11 @@ class QtCreatorConan(ConanFile):
 
     def build(self):
         self.run(f"qmake {self.source_folder}/creator", run_environment=True)
-        self.run("make -j 6")
+        if self.settings.build_os == "Windows":
+            with tools.vcvars(self):
+                self.run("nmake")
+        else:
+            self.run("make -j 6")
 
     def configure(self):
         self.options["qt"].qtdeclarative = True
