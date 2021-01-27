@@ -10,7 +10,7 @@ class QtCreatorConan(ConanFile):
     description = "IDE"
     settings = "os", "compiler", "build_type", "arch"
     generators = "qmake"
-    requires = "qt/5.15.1@bincrafters/stable"
+    requires = "qt/5.15.1@kseinitzer/stable"
     exports_sources = "creator*"
 
     scm = {
