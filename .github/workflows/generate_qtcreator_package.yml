@@ -16,6 +16,13 @@ jobs:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pipCache
 
+      - name: Conan Cache
+        id: conancache
+        uses: actions/cache@v2
+        with:
+          path: ~/.conan
+          key: ${{ runner.os }}-conanCache
+
       - uses: actions/setup-python@v2
         with:
           python-version: '3.x'
@@ -28,7 +35,7 @@ jobs:
           pip install conan
 
       - name: Setup conan
-        if: steps.pipcache.outputs.cache-hit != 'true'
+        if: steps.conancache.outputs.cache-hit != 'true'
         shell: pwsh
         env:
           bintrayApiKey: ${{ secrets.BINTRAY_API_KEY }}
@@ -38,5 +45,6 @@ jobs:
           conan user -p "$env:bintrayApiKey" -r privateQt kseinitzer
 
       - name: Install dependencies
+        if: steps.conancache.outputs.cache-hit != 'true'
         run: |
           conan install qt/5.15.2@bincrafters/stable -o qtdeclarative=True -o qttools=True -o qtsvg=True
