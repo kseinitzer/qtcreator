@@ -32,9 +32,6 @@ class QtCreatorConan(ConanFile):
         self.options["qt"].qtdeclarative = True
         self.options["qt"].qttools = True
         self.options["qt"].qtsvg = True
-        # from QtCreator 4.14.0 conanfile.txt:
-        self.options["qt"].qtscript = True
-        self.options["qt"].qtserialport = True
 
     def package(self):
         self.copy("bin/qtcreator*", keep_path=True)
